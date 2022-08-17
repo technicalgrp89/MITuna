@@ -33,7 +33,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-
     python3 \
     python-dev \
     python3-dev \
-    python-pip \
     python3-pip \
     software-properties-common \
     sqlite3 \
