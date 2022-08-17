@@ -5,7 +5,7 @@ FROM $BASEIMAGE
 RUN set -xe
 
 RUN wget --no-check-certificate -qO - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
-RUN sh -c "echo deb https://apt.kitware.com/ubuntu/ bionic main | tee -a /etc/apt/sources.list"
+RUN sh -c "echo deb https://apt.kitware.com/ubuntu/ focal main | tee -a /etc/apt/sources.list"
 
 ADD requirements.txt requirements.txt
 # Install dependencies
