@@ -1,5 +1,3 @@
-"""logs duplicate entries in PerfDB and invalidates them """
-
 #!/usr/bin/env python3
 
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -10,7 +8,6 @@ from tuna.utils.logger import setup_logger
 
 LOGGER = setup_logger('dupe_resolve')
 
-# pylint: disable-next=invalid-name
 view_perf_cfg_rep = """
 create or replace view perf_cfg_rep as
 select cc2.id, cc3.id as cfg from
@@ -31,7 +28,6 @@ where cc3.spatial_dim=2 and cc3.valid=1 and cc2.cpc_valid=1
 group by cc2.id, cfg;
 """
 
-# pylint: disable-next=invalid-name
 view_perf_db_rep = """
 create or replace view perf_db_rep as
 select cpd2.theid, cpc3.id as mcfg from
@@ -64,9 +60,10 @@ def main():
     session.commit()
     res = session.execute("select id, cfg from perf_cfg_rep").all()
     invalid = 0
-    for session_id, cfg in res:
+    for id, cfg in res:
       try:
-        query = f"update conv_perf_config set config={cfg} where id={session_id};"
+        query = "update conv_perf_config set config={} where id={};".format(
+            cfg, id)
         print(query)
         #session.execute(query)
         #session.commit()
@@ -75,8 +72,8 @@ def main():
       except IntegrityError as error:
         session.rollback()
         LOGGER.warning('insert failed (%s)', error)
-        if "Duplicate entry" in str(error):
-          query = f"update conv_perf_config set valid=0 where id={session_id};"
+        if "Duplicate entry" in "%s" % error:
+          query = "update conv_perf_config set valid=0 where id={};".format(id)
           LOGGER.warning('Invalidating entry (%s)', query)
           invalid += 1
           session.execute(query)
@@ -89,9 +86,10 @@ def main():
     session.commit()
     res = session.execute("select theid, mcfg from perf_db_rep").all()
     invalid = 0
-    for session_id, cfg in res:
+    for id, cfg in res:
       try:
-        query = f"update conv_perf_db set miopen_config={cfg} where id={session_id};"
+        query = "update conv_perf_db set miopen_config={} where id={};".format(
+            cfg, id)
         print(query)
         session.execute(query)
         session.commit()
@@ -100,8 +98,8 @@ def main():
       except IntegrityError as error:
         session.rollback()
         LOGGER.warning('insert failed (%s)', error)
-        if "Duplicate entry" in str(error):
-          query = f"update conv_perf_db set valid=0 where id={session_id};"
+        if "Duplicate entry" in "%s" % error:
+          query = "update conv_perf_db set valid=0 where id={};".format(id)
           LOGGER.warning('Invalidating entry (%s)', query)
           invalid += 1
           session.execute(query)

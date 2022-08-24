@@ -153,7 +153,7 @@ RUN make -j $(nproc)
 RUN make install
 
 ARG FIN_DIR=/root/dFin
-ARG FIN_TOKEN=
+ARG FIN_TOKEN=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
 #Clone Fin 
 RUN git clone https://$FIN_TOKEN:x-oauth-basic@github.com/ROCmSoftwarePlatform/Fin.git $FIN_DIR
 WORKDIR $FIN_DIR

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 ###############################################################################
 #
 # MIT License
@@ -24,29 +23,3 @@
 # SOFTWARE.
 #
 ###############################################################################
-"""Utility module for DB helper functions"""
-
-import enum
-from tuna.dbBase.sql_alchemy import DbSession
-from tuna.miopen_tables import Solver
-
-
-def get_id_solvers():
-  """DB solver id to name map"""
-  solver_id_map_c = {}
-  solver_id_map_h = {}
-  with DbSession() as session:
-    query = session.query(Solver.solver, Solver.id).filter(Solver.valid == 1)
-    for slv, sid in query.all():
-      solver_id_map_c[slv] = sid
-      solver_id_map_h[slv.replace(', ', '-')] = sid
-    id_solver_map_c = {val: key for key, val in solver_id_map_c.items()}
-    id_solver_map_h = {val: key for key, val in solver_id_map_h.items()}
-
-  return id_solver_map_c, id_solver_map_h
-
-
-class DB_Type(enum.Enum):
-  FIND_DB = 1
-  KERN_DB = 2
-  PERF_DB = 3
