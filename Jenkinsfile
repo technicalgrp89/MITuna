@@ -43,7 +43,7 @@ pipeline {
         }
 
         stage("fin get solver"){
-	      agent{  label "gfx908" }
+	      agent{  label "tunatest" }
         steps {
             script {
             utils.finSolvers()
@@ -51,7 +51,7 @@ pipeline {
             } 
         }
         stage("fin applicability"){
-	      agent{  label "gfx908" }
+	      agent{  label "tunatest" }
         steps {
             script{
             utils.finApplicability()
@@ -59,7 +59,7 @@ pipeline {
             }
         }
         stage("fin find compile"){
-        agent{ label "gfx908"}
+        agent{ label "tunatest"}
         steps{
             script {
             utils.finFindCompile()
@@ -75,7 +75,7 @@ pipeline {
             }
         }
         stage("load jobs"){
-        agent{ label "gfx908"} 
+        agent{ label "tunatest"} 
         steps {
             script {
             utils.loadJobTest()
@@ -83,7 +83,7 @@ pipeline {
             }
         }
         stage("perf compile"){
-	      agent{  label "gfx908" }
+	      agent{  label "tunatest" }
         steps {
             script {
             utils.perfCompile()
@@ -99,7 +99,7 @@ pipeline {
             }
         }
         stage("pytest1"){
-        agent{  label "gfx908" }
+        agent{  label "tunatest" }
         steps{
             script{
             utils.pytestSuite1()
@@ -116,7 +116,7 @@ pipeline {
             }
         }
         stage("pytest3"){
-        agent{  label "gfx908" }
+        agent{  label "tunatest" }
         steps{
             script{
             utils.pytestSuite3()
