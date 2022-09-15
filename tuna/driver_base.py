@@ -31,6 +31,7 @@ from tuna.dbBase.sql_alchemy import DbSession
 from tuna.utils.logger import setup_logger
 from tuna.miopen_tables import TensorTable
 from tuna.metadata import TENSOR_PRECISION
+from tuna.metadata import SUPPORTED_CONV_CMDS
 
 LOGGER = setup_logger('driver_base')
 
@@ -212,3 +213,17 @@ class DriverBase():
       else:
         copy_dict[key] = value
     return copy_dict
+
+  @property
+  def cmd(self):
+    """Setting 'private' variable"""
+    return self._cmd
+
+  @cmd.setter
+  def cmd(self, value):
+    """Checking for allowed conv values"""
+    if value not in SUPPORTED_CONV_CMDS:
+      raise ValueError(
+          f'Cannot instantiate convolution Driver class. Supported cmds are: {SUPPORTED_CONV_CMDS}'
+      )
+    self._cmd = value

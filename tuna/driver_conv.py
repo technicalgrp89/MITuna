@@ -78,20 +78,6 @@ class DriverConvolution(DriverBase):
     if cmd:
       self._cmd = cmd
 
-  @property
-  def cmd(self):
-    """Setting 'private' variable"""
-    return self._cmd
-
-  @cmd.setter
-  def cmd(self, value):
-    """Checking for allowed conv values"""
-    if value not in SUPPORTED_CONV_CMDS:
-      raise ValueError(
-          f'Cannot instantiate convolution Driver class. Supported cmds are: {SUPPORTED_CONV_CMDS}'
-      )
-    self._cmd = value
-
   def parse_fdb_key(self, line):
     """import config attributes from fdb key line"""
     fds, _, direction = get_fds_from_cmd(line)
