@@ -110,12 +110,6 @@ class DriverBatchNorm(DriverBase):
     """Setting config DB defaults to avoid duplicates through SELECT"""
     self.set_defaults(BN_DEFAULTS)
 
-  def set_defaults(self, defaults):
-    """Set fds defaults"""
-    for k, val in self.to_dict().items():
-      if val is None and k in defaults.keys():
-        setattr(self, k, defaults[k])
-
   @staticmethod
   def get_params(tok1):
     """Get full arg name"""

@@ -136,12 +136,6 @@ class DriverConvolution(DriverBase):
     else:
       self.set_defaults(CONV_2D_DEFAULTS)
 
-  def set_defaults(self, defaults):
-    """Set fds defaults"""
-    for k, val in self.to_dict().items():
-      if val is None and k in defaults.keys():
-        setattr(self, k, defaults[k])
-
   @staticmethod
   def get_params(tok1):
     """Get full arg name"""

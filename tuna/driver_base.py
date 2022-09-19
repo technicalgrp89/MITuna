@@ -212,3 +212,9 @@ class DriverBase():
       else:
         copy_dict[key] = value
     return copy_dict
+
+  def set_defaults(self, defaults):
+    """Set fds defaults"""
+    for k, val in self.to_dict().items():
+      if val is None and k in defaults.keys():
+        setattr(self, k, defaults[k])
