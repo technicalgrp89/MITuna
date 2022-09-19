@@ -29,7 +29,7 @@ from tuna.driver_base import DriverBase
 from tuna.metadata import CONV_CONFIG_COLS
 from tuna.helper import get_db_id
 from tuna.miopen_tables import ConvolutionConfig
-from tuna.metadata import CONV_2D_DEFAULTS, SUPPORTED_CONV_CMDS
+from tuna.metadata import CONV_2D_DEFAULTS
 from tuna.metadata import CONV_3D_DEFAULTS, TENSOR_COLS, TABLE_COLS_CONV_MAP
 from tuna.metadata import DIRECTION, DIR_MAP, CONV_SKIP_ARGS
 from tuna.parsing import get_fd_name, conv_arg_valid, get_fds_from_cmd
@@ -121,12 +121,6 @@ class DriverConvolution(DriverBase):
       self.set_defaults(CONV_3D_DEFAULTS)
     else:
       self.set_defaults(CONV_2D_DEFAULTS)
-
-  def set_defaults(self, defaults):
-    """Set fds defaults"""
-    for k, val in self.to_dict().items():
-      if val is None and k in defaults.keys():
-        setattr(self, k, defaults[k])
 
   @staticmethod
   def get_params(tok1):

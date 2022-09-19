@@ -227,3 +227,8 @@ class DriverBase():
           f'Cannot instantiate convolution Driver class. Supported cmds are: {SUPPORTED_CONV_CMDS}'
       )
     self._cmd = value
+  def set_defaults(self, defaults):
+    """Set fds defaults"""
+    for k, val in self.to_dict().items():
+      if val is None and k in defaults.keys():
+        setattr(self, k, defaults[k])
