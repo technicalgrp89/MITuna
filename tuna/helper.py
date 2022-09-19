@@ -188,6 +188,7 @@ def handle_op_error(logger, error):
     raise error
 
 
+# pylint: disable-all
 #DEPRECATED
 def get_conv_dict(c_dict, fds):
   """Compose db cols for conv_config table"""
@@ -356,6 +357,7 @@ def set_tensor_defaults(fds, tensor_dict):
   return tensor_dict
 
 
+# pylint: enable-all
 def get_db_id(db_elems, config_table):
   """Return unique DB id for config dict"""
   cid = None
