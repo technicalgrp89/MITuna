@@ -27,7 +27,7 @@
 """Module that encapsulates the DB representation of a batch_normDriver cmd"""
 from tuna.driver_base import DriverBase
 from tuna.metadata import BN_CONFIG_COLS, IN_TENSOR_COLS
-from tuna.metadata import TABLE_COLS_BN_MAP, BN_DEFAULTS
+from tuna.metadata import SUPPORTED_BN_CMDS, TABLE_COLS_BN_MAP, BN_DEFAULTS
 from tuna.metadata import DIRECTION, DIR_MAP, BN_SKIP_ARGS
 from tuna.miopen_tables import BNConfig
 from tuna.parsing import get_fd_name, arg_valid
@@ -109,6 +109,12 @@ class DriverBatchNorm(DriverBase):
   def config_set_defaults(self):
     """Setting config DB defaults to avoid duplicates through SELECT"""
     self.set_defaults(BN_DEFAULTS)
+
+  def set_defaults(self, defaults):
+    """Set fds defaults"""
+    for k, val in self.to_dict().items():
+      if val is None and k in defaults.keys():
+        setattr(self, k, defaults[k])
 
   @staticmethod
   def get_params(tok1):
