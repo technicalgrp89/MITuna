@@ -61,6 +61,20 @@ class DriverBatchNorm(DriverBase):
     if cmd:
       self._cmd = cmd
 
+  @property
+  def cmd(self):
+    """Setting 'private' attribute"""
+    return self._cmd
+
+  @cmd.setter
+  def cmd(self, value):
+    """Checking allowed BN cmd values"""
+    print(value)
+    if value not in SUPPORTED_BN_CMDS:
+      raise ValueError(f'Cannot instantiate batch normalization Driver class. \
+           Supported cmds are: {SUPPORTED_BN_CMDS}')
+    self._cmd = value
+
   def parse_driver_line(self, line):
     super().parse_driver_line(line)
 
