@@ -62,12 +62,12 @@ class DriverBatchNorm(DriverBase):
       self._cmd = cmd
 
   @property
-  def cmd(self):
+  def cmd_bn(self):
     """Setting 'private' attribute"""
     return self._cmd
 
-  @cmd.setter
-  def cmd(self, value):
+  @cmd_bn.setter
+  def cmd_bn(self, value):
     """Checking allowed BN cmd values"""
     print(value)
     if value not in SUPPORTED_BN_CMDS:
