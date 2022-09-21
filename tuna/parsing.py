@@ -327,7 +327,7 @@ def get_fds_from_cmd(cmd):
     if not fds['cmd']:
       LOGGER.error('Invalid precision in perf db key')
   else:
-    fds, direction = parse_driver_line(cmd)
+    fds, direction = parse_driver_fds(cmd)
   config_set_defaults(fds)
   cmd = fds['cmd']
 
@@ -377,7 +377,7 @@ def arg_valid(arg, val):
   return True
 
 
-def parse_driver_line(line):
+def parse_driver_fds(line):
   """return network parameters from driver invocation"""
   fds = {}
   line = line.strip()
