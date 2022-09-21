@@ -31,30 +31,11 @@ from tuna.utils.logger import setup_logger
 from tuna.tables import DBTables
 from tuna.dbBase.sql_alchemy import DbSession
 from tuna.session import Session
-
+from tuna.parse_args import parse_args_populate_golden
 # Setup logging
 LOGGER = setup_logger('populate_golden')
 
-
-def parse_args():
-  """! Function to parse arguments"""
-  parser = setup_arg_parser('Populate golden table based on session_id',
-                            [TunaArgs.CONFIG_TYPE])
-  parser.add_argument(
-      '--session_id',
-      action='store',
-      type=int,
-      dest='session_id',
-      help=
-      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
-  )
-  parser.add_argument('--golden_v',
-                      action='store',
-                      type=int,
-                      dest='golden_v',
-                      help='Golden miopen version')
-  args = parser.parse_args()
-  return args
+args = parse_args_populate_golden()
 
 
 def get_query(dbt):

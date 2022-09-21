@@ -82,6 +82,7 @@ def setup_arg_parser(desc: str, arg_list: List[TunaArgs]):
                         type=ConfigType)
   return parser
 
+
 def parse_args_export_db():
   """Function to parse arguments"""
   parser = setup_arg_parser('Convert MYSQL find_db to text find_dbs' \
@@ -130,4 +131,25 @@ def parse_args_export_db():
                      default=False)
   args = parser.parse_args()
 
+  return args
+
+
+def parse_args_populate_golden():
+  """! Function to parse arguments"""
+  parser = setup_arg_parser('Populate golden table based on session_id',
+                            [TunaArgs.CONFIG_TYPE])
+  parser.add_argument(
+      '--session_id',
+      action='store',
+      type=int,
+      dest='session_id',
+      help=
+      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
+  )
+  parser.add_argument('--golden_v',
+                      action='store',
+                      type=int,
+                      dest='golden_v',
+                      help='Golden miopen version')
+  args = parser.parse_args()
   return args

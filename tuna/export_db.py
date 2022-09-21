@@ -47,9 +47,8 @@ DIR_NAME = {'F': 'Fwd', 'B': 'BwdData', 'W': 'BwdWeights'}
 # Setup logging
 LOGGER = setup_logger('export_db')
 
-
-
 args = parse_args_export_db()
+
 
 def fdb_query(dbt, args):
   """ Helper function to create find db query
