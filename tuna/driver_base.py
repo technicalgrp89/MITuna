@@ -31,7 +31,7 @@ from tuna.dbBase.sql_alchemy import DbSession
 from tuna.utils.logger import setup_logger
 from tuna.miopen_tables import TensorTable
 from tuna.metadata import TENSOR_PRECISION
-from parsing import parse_line
+from tuna.parsing import parse_line
 
 LOGGER = setup_logger('driver_base')
 
