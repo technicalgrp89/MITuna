@@ -341,6 +341,7 @@ class WorkerInterface(Process):
   def compose_kernel_entry(self, fdb_obj, fdb_entry):
     """Compose a new Kernel Cache entry from fin input"""
     # Now we have the ID, lets add the binary cache objects
+    #pylint: disable-all
     fdb_entry.blobs = []
     for kern_obj in fdb_obj['kernel_objects']:
       kernel_obj = self.dbt.kernel_cache()
@@ -352,6 +353,8 @@ class WorkerInterface(Process):
       kernel_obj.uncompressed_size = kern_obj['uncompressed_size']
       fdb_entry.blobs.append(kernel_obj)
     return True
+
+  # pylint: enable-all
 
   def process_fdb_w_kernels(self,
                             session,
