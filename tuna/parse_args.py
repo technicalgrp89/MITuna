@@ -81,3 +81,53 @@ def setup_arg_parser(desc: str, arg_list: List[TunaArgs]):
                         choices=ConfigType,
                         type=ConfigType)
   return parser
+
+def parse_args_export_db():
+  """Function to parse arguments"""
+  parser = setup_arg_parser('Convert MYSQL find_db to text find_dbs' \
+    'architecture', [TunaArgs.ARCH, TunaArgs.NUM_CU, TunaArgs.VERSION])
+  parser.add_argument('-c',
+                      '--opencl',
+                      dest='opencl',
+                      action='store_true',
+                      help='Use OpenCL extension',
+                      default=False)
+  parser.add_argument(
+      '--session_id',
+      action='store',
+      type=int,
+      dest='session_id',
+      help=
+      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
+  )
+  parser.add_argument('--config_tag',
+                      dest='config_tag',
+                      type=str,
+                      help='import configs based on config tag',
+                      default=None)
+  parser.add_argument('--filename',
+                      dest='filename',
+                      help='Custom filename for DB dump',
+                      default=None)
+  group = parser.add_mutually_exclusive_group(required=True)
+  group.add_argument('-k',
+                     '--kern_db',
+                     dest='kern_db',
+                     action='store_true',
+                     help='Serialize Kernel Database',
+                     default=False)
+  group.add_argument('-f',
+                     '--find_db',
+                     dest='find_db',
+                     action='store_true',
+                     help='Serialize Find Database',
+                     default=False)
+  group.add_argument('-p',
+                     '--perf_db',
+                     dest='perf_db',
+                     action='store_true',
+                     help='Serialize Perf Database',
+                     default=False)
+  args = parser.parse_args()
+
+  return args

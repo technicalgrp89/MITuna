@@ -40,6 +40,7 @@ from tuna.utils.logger import setup_logger
 from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.analyze_parse_db import get_config_sqlite, insert_solver_sqlite, mysql_to_sqlite_cfg
 from tuna.fin_utils import compose_config_obj
+from tuna.parse_args import parse_args_export_db
 
 DIR_NAME = {'F': 'Fwd', 'B': 'BwdData', 'W': 'BwdWeights'}
 
@@ -47,56 +48,8 @@ DIR_NAME = {'F': 'Fwd', 'B': 'BwdData', 'W': 'BwdWeights'}
 LOGGER = setup_logger('export_db')
 
 
-def parse_args():
-  """Function to parse arguments"""
-  parser = setup_arg_parser('Convert MYSQL find_db to text find_dbs' \
-    'architecture', [TunaArgs.ARCH, TunaArgs.NUM_CU, TunaArgs.VERSION])
-  parser.add_argument('-c',
-                      '--opencl',
-                      dest='opencl',
-                      action='store_true',
-                      help='Use OpenCL extension',
-                      default=False)
-  parser.add_argument(
-      '--session_id',
-      action='store',
-      type=int,
-      dest='session_id',
-      help=
-      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
-  )
-  parser.add_argument('--config_tag',
-                      dest='config_tag',
-                      type=str,
-                      help='import configs based on config tag',
-                      default=None)
-  parser.add_argument('--filename',
-                      dest='filename',
-                      help='Custom filename for DB dump',
-                      default=None)
-  group = parser.add_mutually_exclusive_group(required=True)
-  group.add_argument('-k',
-                     '--kern_db',
-                     dest='kern_db',
-                     action='store_true',
-                     help='Serialize Kernel Database',
-                     default=False)
-  group.add_argument('-f',
-                     '--find_db',
-                     dest='find_db',
-                     action='store_true',
-                     help='Serialize Find Database',
-                     default=False)
-  group.add_argument('-p',
-                     '--perf_db',
-                     dest='perf_db',
-                     action='store_true',
-                     help='Serialize Perf Database',
-                     default=False)
-  args = parser.parse_args()
 
-  return args
-
+args = parse_args_export_db()
 
 def fdb_query(dbt, args):
   """ Helper function to create find db query
