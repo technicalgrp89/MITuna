@@ -37,7 +37,6 @@ from tuna.tables import DBTables
 from tuna.metadata import SQLITE_PERF_DB_COLS
 from tuna.utils.db_utility import get_id_solvers, DB_Type
 from tuna.utils.logger import setup_logger
-from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.analyze_parse_db import get_config_sqlite, insert_solver_sqlite, mysql_to_sqlite_cfg
 from tuna.fin_utils import compose_config_obj
 from tuna.parse_args import parse_args_export_db
@@ -46,8 +45,6 @@ DIR_NAME = {'F': 'Fwd', 'B': 'BwdData', 'W': 'BwdWeights'}
 
 # Setup logging
 LOGGER = setup_logger('export_db')
-
-args = parse_args_export_db()
 
 
 def fdb_query(dbt, args):
@@ -401,7 +398,7 @@ def export_pdb(dbt, args):
 
 def main():
   """Main module function"""
-  args = parse_args()
+  args = parse_args_export_db()
   result_file = ''
   dbt = DBTables(session_id=args.session_id)
 

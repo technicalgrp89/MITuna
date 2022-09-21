@@ -26,7 +26,6 @@
 ###############################################################################
 """! @brief Script to populate the golden table based on session_id"""
 from sqlalchemy.exc import IntegrityError, OperationalError  #pylint: disable=wrong-import-order
-from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.utils.logger import setup_logger
 from tuna.tables import DBTables
 from tuna.dbBase.sql_alchemy import DbSession
@@ -34,8 +33,6 @@ from tuna.session import Session
 from tuna.parse_args import parse_args_populate_golden
 # Setup logging
 LOGGER = setup_logger('populate_golden')
-
-args = parse_args_populate_golden()
 
 
 def get_query(dbt):
@@ -81,7 +78,7 @@ def add_golden_entries(args, dbt):
 
 def main():
   """! Main function"""
-  args = parse_args()
+  args = parse_args_populate_golden()
   dbt = DBTables(session_id=args.session_id, config_type=args.config_type)
   add_golden_entries(args, dbt)
 
