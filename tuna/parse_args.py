@@ -29,6 +29,7 @@ import argparse
 from enum import Enum
 from typing import List
 from tuna.helper import ConfigType
+from tuna.metadata import ALG_SLV_MAP, get_solver_ids
 
 
 class TunaArgs(Enum):
@@ -152,4 +153,102 @@ def parse_args_populate_golden():
                       dest='golden_v',
                       help='Golden miopen version')
   args = parser.parse_args()
+  return args
+
+
+def parse_args_load_jobs():
+  """ Argument input for the module """
+
+  parser = setup_arg_parser(
+      'Insert jobs into MySQL db by tag from" \
+      " config_tags table.', [TunaArgs.VERSION, TunaArgs.CONFIG_TYPE])
+  config_filter = parser.add_mutually_exclusive_group(required=True)
+  solver_filter = parser.add_mutually_exclusive_group()
+  config_filter.add_argument(
+      '-t',
+      '--tag',
+      type=str,
+      dest='tag',
+      help='All configs with this tag will be added to the job table. \
+                        By default adds jobs with no solver specified (all solvers).'
+  )
+  config_filter.add_argument('--all_configs',
+                             dest='all_configs',
+                             action='store_true',
+                             help='Add all convolution jobs')
+  solver_filter.add_argument(
+      '-A',
+      '--algo',
+      type=str,
+      dest='algo',
+      default=None,
+      help='Add job for each applicable solver+config in Algorithm.',
+      choices=ALG_SLV_MAP.keys())
+  solver_filter.add_argument('-s',
+                             '--solvers',
+                             type=str,
+                             dest='solvers',
+                             default=None,
+                             help='add jobs with only these solvers '\
+                               '(can be a comma separated list)')
+  parser.add_argument(
+      '-o',
+      '--only_applicable',
+      dest='only_app',
+      action='store_true',
+      help='Use with --tag to create a job for each applicable solver.')
+  parser.add_argument('--tunable',
+                      dest='tunable',
+                      action='store_true',
+                      help='Use to add only tunable solvers.')
+  parser.add_argument('-c',
+                      '--cmd',
+                      type=str,
+                      dest='cmd',
+                      default=None,
+                      required=False,
+                      help='Command precision for config',
+                      choices=['conv', 'convfp16', 'convbfp16'])
+  parser.add_argument('-l',
+                      '--label',
+                      type=str,
+                      dest='label',
+                      required=True,
+                      help='Label to annontate the jobs.',
+                      default='new')
+  parser.add_argument('--fin_steps', dest='fin_steps', type=str, default=None)
+  parser.add_argument(
+      '--session_id',
+      action='store',
+      required=True,
+      type=int,
+      dest='session_id',
+      help=
+      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
+  )
+
+  args = parser.parse_args()
+
+  if args.fin_steps:
+    steps = [x.strip() for x in args.fin_steps.split(',')]
+    args.fin_steps = set(steps)
+
+  solver_id_map, _ = get_solver_ids()
+  solver_arr = None
+  if args.solvers:
+    solver_arr = args.solvers.split(',')
+  elif args.algo:
+    solver_arr = ALG_SLV_MAP[args.algo]
+
+  if solver_arr:
+    solver_ids = []
+    for solver in solver_arr:
+      sid = solver_id_map.get(solver, None)
+      if not sid:
+        parser.error(f'Invalid solver: {solver}')
+      solver_ids.append((solver, sid))
+    args.solvers = solver_ids
+  else:
+    args.solvers = [('', None)]
+
   return args
