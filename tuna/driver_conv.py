@@ -79,12 +79,12 @@ class DriverConvolution(DriverBase):
       self._cmd = cmd
 
   @property
-  def cmd_conv(self):
+  def cmd(self):
     """Setting 'private' variable"""
     return self._cmd
 
-  @cmd_conv.setter
-  def cmd_conv(self, value):
+  @cmd.setter
+  def cmd(self, value):
     """Checking for allowed conv values"""
     if value not in SUPPORTED_CONV_CMDS:
       raise ValueError(
