@@ -227,7 +227,7 @@ def parse_args_load_jobs():
       'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
   )
 
-  args = parser.parse_args()
+  args = parser.parse_args_load_jobs()
 
   if args.fin_steps:
     steps = [x.strip() for x in args.fin_steps.split(',')]
