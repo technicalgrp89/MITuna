@@ -31,17 +31,116 @@ Script for adding jobs to the MySQL database
 from sqlalchemy.exc import IntegrityError  #pylint: disable=wrong-import-order
 from sqlalchemy.sql.expression import true
 
-from tuna.metadata import TENSOR_PRECISION
+from tuna.metadata import ALG_SLV_MAP, get_solver_ids, TENSOR_PRECISION
 from tuna.utils.logger import setup_logger
+from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.db_tables import connect_db
 from tuna.miopen_tables import Solver
 from tuna.dbBase.sql_alchemy import DbSession
 from tuna.config_type import ConfigType
 from tuna.tables import DBTables
-from tuna.parse_args import parse_args_load_jobs
 
 LOGGER = setup_logger('load_jobs')
 LOG_FREQ = 100
+
+
+# pylint: disable-all
+def parse_args():
+  """ Argument input for the module """
+  #pylint: disable=duplicate-code
+  parser = setup_arg_parser(
+      'Insert jobs into MySQL db by tag from" \
+      " config_tags table.', [TunaArgs.VERSION, TunaArgs.CONFIG_TYPE])
+  config_filter = parser.add_mutually_exclusive_group(required=True)
+  solver_filter = parser.add_mutually_exclusive_group()
+  config_filter.add_argument(
+      '-t',
+      '--tag',
+      type=str,
+      dest='tag',
+      help='All configs with this tag will be added to the job table. \
+                        By default adds jobs with no solver specified (all solvers).'
+  )
+  config_filter.add_argument('--all_configs',
+                             dest='all_configs',
+                             action='store_true',
+                             help='Add all convolution jobs')
+  solver_filter.add_argument(
+      '-A',
+      '--algo',
+      type=str,
+      dest='algo',
+      default=None,
+      help='Add job for each applicable solver+config in Algorithm.',
+      choices=ALG_SLV_MAP.keys())
+  solver_filter.add_argument('-s',
+                             '--solvers',
+                             type=str,
+                             dest='solvers',
+                             default=None,
+                             help='add jobs with only these solvers '\
+                               '(can be a comma separated list)')
+  parser.add_argument(
+      '-o',
+      '--only_applicable',
+      dest='only_app',
+      action='store_true',
+      help='Use with --tag to create a job for each applicable solver.')
+  parser.add_argument('--tunable',
+                      dest='tunable',
+                      action='store_true',
+                      help='Use to add only tunable solvers.')
+  parser.add_argument('-c',
+                      '--cmd',
+                      type=str,
+                      dest='cmd',
+                      default=None,
+                      required=False,
+                      help='Command precision for config',
+                      choices=['conv', 'convfp16', 'convbfp16'])
+  parser.add_argument('-l',
+                      '--label',
+                      type=str,
+                      dest='label',
+                      required=True,
+                      help='Label to annontate the jobs.',
+                      default='new')
+  parser.add_argument('--fin_steps', dest='fin_steps', type=str, default=None)
+  parser.add_argument(
+      '--session_id',
+      action='store',
+      required=True,
+      type=int,
+      dest='session_id',
+      help=
+      'Session ID to be used as tuning tracker. Allows to correlate DB results to tuning sessions'
+  )
+
+  args = parser.parse_args()
+
+  if args.fin_steps:
+    steps = [x.strip() for x in args.fin_steps.split(',')]
+    args.fin_steps = set(steps)
+
+  solver_id_map, _ = get_solver_ids()
+  solver_arr = None
+  if args.solvers:
+    solver_arr = args.solvers.split(',')
+  elif args.algo:
+    solver_arr = ALG_SLV_MAP[args.algo]
+
+  if solver_arr:
+    solver_ids = []
+    for solver in solver_arr:
+      sid = solver_id_map.get(solver, None)
+      if not sid:
+        parser.error(f'Invalid solver: {solver}')
+      solver_ids.append((solver, sid))
+    args.solvers = solver_ids
+  else:
+    args.solvers = [('', None)]
+
+  return args
 
 
 def test_tag_name(tag, dbt):
@@ -182,7 +281,7 @@ def add_jobs(args, counts, dbt):
 
 def main():
   """ main """
-  args = parse_args_load_jobs()
+  args = parse_args()
   connect_db()
 
   counts = {}
