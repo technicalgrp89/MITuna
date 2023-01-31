@@ -242,12 +242,7 @@ def add_jobs(args, dbt):
 
   return counts
 
-
-def main():
-  """ main """
-  args = parse_args()
-  connect_db()
-
+def sample_load_jobs(args):
   dbt = MIOpenDBTables(session_id=None, config_type=args.config_type)
   if args.tag:
     try:
@@ -258,6 +253,13 @@ def main():
   cnt = add_jobs(args, dbt)
 
   print(f"New jobs added: {cnt}")
+
+
+def main():
+  """ main """
+  args = parse_args()
+  #connect_db()
+  sample_load_jobs(args)
 
 
 if __name__ == '__main__':

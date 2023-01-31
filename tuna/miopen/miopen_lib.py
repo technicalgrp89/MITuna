@@ -43,6 +43,7 @@ from tuna.libraries import Library
 from tuna.miopen.db_tables import create_tables, recreate_triggers
 from tuna.miopen.miopen_db_helpers import drop_miopen_triggers, get_miopen_triggers
 from tuna.config_type import ConfigType
+from tuna.load_job import sample_load_job
 
 
 class MIOpen(MITunaInterface):
@@ -100,6 +101,10 @@ class MIOpen(MITunaInterface):
                         required=False,
                         help='Restart interval for job in hours.')
 
+    #ALEX NOTE: copy args from load_job.py:
+    #tag, algo, solvers, only_dynamic, tunable, cmd
+    #make sure to keep the mutually exclusive groups from load_job as well.
+
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--add_tables',
                        dest='add_tables',
@@ -141,6 +146,14 @@ class MIOpen(MITunaInterface):
                        type=str,
                        default=None,
                        help='execute on each machine')
+    group.add_argument('-l',
+                       '--load_job',
+                       dest='load_job',
+                       type=str,
+                       default=None,
+                       help='execute on each machine')
+
+
 
     clean_args()
     self.args = parser.parse_args()
@@ -302,6 +315,10 @@ class MIOpen(MITunaInterface):
     recreate_triggers(drop_miopen_triggers(), get_miopen_triggers())
     return True
 
+  def load_job(self):
+    sample_load_job(args)
+    
+
   def run(self):
     # pylint: disable=duplicate-code
     """Main function to launch library"""
@@ -309,6 +326,9 @@ class MIOpen(MITunaInterface):
     self.parse_args()
     if self.args.add_tables:
       self.add_tables()
+      return None
+    if self.args.load_job:
+      self.load_job(self.args)
       return None
     machines = load_machines(self.args)
     res = self.compose_worker_list(machines)
