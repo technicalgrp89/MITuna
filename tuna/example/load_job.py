@@ -28,6 +28,8 @@
 Script for adding jobs to the MySQL database
 """
 
+import logging
+import argparse
 from sqlalchemy.exc import IntegrityError
 
 from tuna.utils.logger import setup_logger
@@ -35,11 +37,12 @@ from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.utils.db_utility import connect_db
 from tuna.dbBase.sql_alchemy import DbSession
 from tuna.example.tables import ExampleDBTables
+from tuna.example.example_tables import Job
 
-LOGGER = setup_logger('example_load_jobs')
+LOGGER: logging.Logger = setup_logger('example_load_jobs')
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
   """ Argument input for the module """
   #pylint: disable=duplicate-code
   parser = setup_arg_parser(
@@ -53,19 +56,19 @@ def parse_args():
                       help='Label to annontate the jobs.',
                       default='new')
 
-  args = parser.parse_args()
+  args: argparse.Namespace = parser.parse_args()
   if not args.session_id:
     parser.error('session_id must be specified')
 
   return args
 
 
-def add_jobs(args, dbt):
+def add_jobs(args: argparse.Namespace, dbt: ExampleDBTables) -> int:
   """ Add jobs based on args query specified"""
   counts = 0
   with DbSession() as session:
     try:
-      job = dbt.job_table()
+      job: Job = dbt.job_table()
       job.state = 'new'
       job.valid = 1
       job.reason = args.label
