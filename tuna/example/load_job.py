@@ -30,8 +30,9 @@ Script for adding jobs to the MySQL database
 
 import logging
 import argparse
-from sqlalchemy.exc import IntegrityError
 
+from typing import Type
+from sqlalchemy.exc import IntegrityError
 from tuna.utils.logger import setup_logger
 from tuna.parse_args import TunaArgs, setup_arg_parser
 from tuna.utils.db_utility import connect_db
@@ -63,8 +64,11 @@ def parse_args() -> argparse.Namespace:
   return args
 
 
-def add_jobs(args: argparse.Namespace, dbt: ExampleDBTables) -> int:
-  """ Add jobs based on args query specified"""
+def add_jobs(args: argparse.Namespace, dbt: Type[ExampleDBTables]) -> int:
+  """
+    Function uses args.label & args.session_id to create new jobs into
+    job_table.
+  """
   counts = 0
   with DbSession() as session:
     try:
