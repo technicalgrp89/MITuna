@@ -26,7 +26,7 @@
 ###############################################################################
 """Module that encapsulates the DB representation"""
 
-from typing import Dict, Any
+from typing import Dict, Any, Type
 from tuna.tables_interface import DBTablesInterface
 from tuna.example.example_tables import Job
 from tuna.example.session import SessionExample
@@ -41,8 +41,8 @@ class ExampleDBTables(DBTablesInterface):
     super().__init__(**kwargs)
 
     #for pylint
-    self.job_table: Job = None
-    self.session_table: SessionExample = SessionExample
+    self.job_table: Type[Job] = Job
+    self.session_table: Type[SessionExample] = SessionExample
 
     self.set_tables()
 
