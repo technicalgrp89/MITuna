@@ -27,6 +27,7 @@
 """ Module for defining benchmark and model enums """
 
 from enum import Enum as pyenum
+from typing import Tuple
 from sqlalchemy import Column, UniqueConstraint
 from sqlalchemy import Enum, Float
 from tuna.dbBase.base_class import BASE
@@ -35,12 +36,12 @@ from tuna.dbBase.base_class import BASE
 #pylint: disable=too-few-public-methods
 class FrameworkEnum(pyenum):
   """Represents framework enums"""
-  PYTORCH = 'Pytorch'
-  TENSORFLOW = 'Tensorflow'
-  MIGRAPH = 'MIGraph'
-  CAFFE2 = 'CAFEE2'
+  PYTORCH: str = 'Pytorch'
+  TENSORFLOW: str = 'Tensorflow'
+  MIGRAPH: str = 'MIGraph'
+  CAFFE2: str = 'CAFEE2'
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.value
 
 
@@ -54,31 +55,33 @@ class Framework(BASE):
 
 class ModelEnum(pyenum):
   """Represents model enums"""
-  RESNET50 = 'Resnet50'
-  RESNEXT101 = 'Resnext101'
-  VGG16 = 'Vgg16'
-  VGG19 = 'Vgg19'
-  ALEXNET = 'Alexnet'
-  GOOGLENET = 'Googlenet'
-  INCEPTION3 = 'Inception3'
-  INCEPTION4 = 'Inception4'
-  MASKRCNN = 'Mask-r-cnn'
-  SHUFFLENET = 'Shufflenet'
-  SSD = 'ssd'
-  MOBILENET = 'Mobilenet'
-  RESNET101 = 'Resnet101'
-  RESNET152 = 'Resnet152'
-  VGG11 = 'Vgg11'
-  DENSENET = 'Densenet'
-  DENSENET201 = 'Densenet201'
+  RESNET50: str = 'Resnet50'
+  RESNEXT101: str = 'Resnext101'
+  VGG16: str = 'Vgg16'
+  VGG19: str = 'Vgg19'
+  ALEXNET: str = 'Alexnet'
+  GOOGLENET: str = 'Googlenet'
+  INCEPTION3: str = 'Inception3'
+  INCEPTION4: str = 'Inception4'
+  MASKRCNN: str = 'Mask-r-cnn'
+  SHUFFLENET: str = 'Shufflenet'
+  SSD: str = 'ssd'
+  MOBILENET: str = 'Mobilenet'
+  RESNET101: str = 'Resnet101'
+  RESNET152: str = 'Resnet152'
+  VGG11: str = 'Vgg11'
+  DENSENET: str = 'Densenet'
+  DENSENET201: str = 'Densenet201'
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.value
 
 
 class Model(BASE):
   """Represents model table"""
-  __tablename__ = "model"
-  __table_args__ = (UniqueConstraint("model", "version", name="uq_idx"),)
+  __tablename__: str = "model"
+  __table_args__: Tuple[UniqueConstraint] = (UniqueConstraint("model",
+                                                              "version",
+                                                              name="uq_idx"),)
   model = Column(Enum(ModelEnum), nullable=False)
   version = Column(Float, nullable=False)
