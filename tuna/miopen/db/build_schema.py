@@ -25,6 +25,8 @@
 #
 ###############################################################################
 """ Module for creating DB tables"""
+import logging
+from typing import List
 from sqlalchemy.exc import OperationalError
 from tuna.miopen.db.miopen_tables import get_miopen_tables
 from tuna.miopen.db.triggers import get_miopen_triggers, drop_miopen_triggers
@@ -33,10 +35,11 @@ from tuna.utils.logger import setup_logger
 from tuna.utils.db_utility import create_tables
 
 #pylint: disable=too-few-public-methods
-LOGGER = setup_logger('db_tables')
+LOGGER: logging.Logger = setup_logger('db_tables')
 
 
-def recreate_triggers(drop_triggers, create_triggers):
+def recreate_triggers(drop_triggers: List[str],
+                      create_triggers: List[str]) -> bool:
   """Drop and recreate triggers"""
 
   with ENGINE.connect() as conn:
@@ -54,10 +57,10 @@ def recreate_triggers(drop_triggers, create_triggers):
   return True
 
 
-def main():
+def main() -> None:
   """Main script function"""
   #setup MIOpen DB
-  ret_t = create_tables(get_miopen_tables())
+  ret_t: bool = create_tables(get_miopen_tables())
   LOGGER.info('DB creation successful: %s', ret_t)
   recreate_triggers(drop_miopen_triggers(), get_miopen_triggers())
 
